@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<bean id="milton.catacomb.resource.factory" class="org.milton.provider.CatacombResourceFactory">
+		<constructor-arg index="0"
+			ref="milton.catacomb.security.manager" />
+		<constructor-arg index="1"
+			ref="milton.catacomb.daslresourcedao" />
+	</bean>
+
+	<bean id="milton.catacomb.security.manager" class="org.milton.provider.security.CatacombSecurityManager" />
+
+	<bean id="milton.catacomb.daslresourcedao" class="org.milton.provider.dao.DaslResourceDao">
+		<constructor-arg index="0" ref="milton.catacomb.datasource" />
+	</bean>
+
+	<bean id="milton.catacomb.datasource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/dasl" />
+		<property name="username" value="root" />
+	</bean>
+
+	<bean id="auth.service" class="com.bradmcevoy.http.AuthenticationService">
+		<constructor-arg index="0">
+			<list>
+				<ref bean="milton.auth.digest" />
+				<ref bean="milton.auth.basic" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="milton.response.handler" class="com.bradmcevoy.http.webdav.DefaultWebDavResponseHandler">
+		<constructor-arg ref="auth.service" />
+	</bean>
+
+	<bean id="milton.auth.digest"
+		class="com.bradmcevoy.http.http11.auth.SecurityManagerDigestAuthenticationHandler">
+		<constructor-arg ref="milton.catacomb.security.manager" />
+	</bean>
+
+	<bean id="milton.auth.basic"
+		class="com.bradmcevoy.http.http11.auth.SecurityManagerBasicAuthHandler">
+		<constructor-arg ref="milton.catacomb.security.manager" />
+	</bean>
+
+
+	<bean id="milton.response.handler.compressing" class="com.bradmcevoy.http.CompressingResponseHandler">
+		<constructor-arg ref="milton.response.handler" />
+	</bean>
+
+
+	<bean id="milton.http.manager" class="com.bradmcevoy.http.HttpManager">
+		<constructor-arg ref="milton.catacomb.resource.factory" />
+		<constructor-arg ref="milton.response.handler.compressing" />
+		<constructor-arg ref="auth.service" />
+
+		<property name="filters">
+			<list>
+				<ref bean="milton.debug.filter" />
+				<ref bean="milton.preauthentication.filter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="milton.debug.filter" class="com.bradmcevoy.http.DebugFilter" />
+
+	<bean id="milton.preauthentication.filter" class="com.bradmcevoy.http.http11.auth.PreAuthenticationFilter">
+		<constructor-arg index="0" ref="milton.response.handler" />
+		<constructor-arg index="1">
+			<list>
+				<ref bean="milton.auth.digest" />
+				<ref bean="milton.auth.basic" />
+			</list>
+		</constructor-arg>
+	</bean>
+</beans>

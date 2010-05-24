@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../xsd/dataset.xsd">
+    <DASL_RESOURCE
+                SERIALNO="1"
+                USER_ID="11005"
+                URI="/"
+                CREATIONDATE="1267438336000000"
+                GETCONTENTLENGTH="0"
+                DOCUMENT_ID="NULL"
+                GETLASTMODIFIED="1267438336000000"
+                RESOURCETYPE="1"
+                DEPTH="1"
+                WIN32FILEATTRIBUTES="0"
+                />
+    <DASL_RESOURCE
+                SERIALNO="2"
+                USER_ID="11005"
+                URI="/foo"
+                CREATIONDATE="1267438336000000"
+                GETCONTENTLENGTH="0"
+                DOCUMENT_ID="NULL"
+                GETLASTMODIFIED="1267438336000000"
+                RESOURCETYPE="1"
+                DEPTH="1"
+                WIN32FILEATTRIBUTES="0"
+                />
+</dataset>
